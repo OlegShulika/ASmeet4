@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">ASmeet4</string>
+    <string name="current_state_label">Current state:</string>
+    <string name="button_change_state">Change state</string>
+    <string name="state_NotAvail">N/A</string>
+</resources>
