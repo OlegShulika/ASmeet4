@@ -32,7 +32,8 @@ public class MainActivity extends AppCompatActivity {
         mChangeStateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                StateIntentService.startChangeStateAction(MainActivity.this,
+                        System.currentTimeMillis());
             }
         });
     }

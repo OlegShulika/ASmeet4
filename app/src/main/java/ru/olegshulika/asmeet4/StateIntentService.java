@@ -3,6 +3,7 @@ package ru.olegshulika.asmeet4;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
+import android.util.Log;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -12,12 +13,16 @@ import android.content.Context;
  */
 public class StateIntentService extends IntentService {
     private static final String TAG = "_StateIntSrv";
-                                                    // Change State action A->B->C->D->E->A...
+
     private static final String ACTION_CHANGESTATE = "ru.olegshulika.asmeet4.action.changestate";
     private static final String EXTRA_PARAM_SYSTIME = "ru.olegshulika.asmeet4.extra.systime";
 
+    private AStateManager stateMgr;
+
     public StateIntentService() {
-        super("StateIntentService");
+        super(StateIntentService.class.getName());
+        stateMgr = AStateManager.getInstance();
+        Log.d(TAG, "constructor");
     }
 
     /**
@@ -26,7 +31,8 @@ public class StateIntentService extends IntentService {
      *
      * @see IntentService
      */
-    public static void startActionChangeState(Context context, long sysTime) {
+    public static void startChangeStateAction(Context context, long sysTime) {
+        Log.d(TAG, "start IntentService "+sysTime);
         Intent intent = new Intent(context, StateIntentService.class);
         intent.setAction(ACTION_CHANGESTATE);
         intent.putExtra(EXTRA_PARAM_SYSTIME, sysTime);
@@ -36,6 +42,7 @@ public class StateIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        Log.d(TAG, "onHandleIntent"+intent);
         if (intent != null) {
             final String action = intent.getAction();
             if (ACTION_CHANGESTATE.equals(action)) {
@@ -46,12 +53,12 @@ public class StateIntentService extends IntentService {
     }
 
     /**
-     * Handle action Foo in the provided background thread with the provided
+     * Handle action ACTION_CHANGESTATE in the provided background thread with the provided
      * parameters.
      */
-    private void handleActionChangeState(long sysemTime) {
-        // TODO: Handle action Foo
-        throw new UnsupportedOperationException("Not yet implemented");
+    private void handleActionChangeState(long systemTime) {
+        Log.d(TAG, "handleActionChangeState ms="+(System.currentTimeMillis()-systemTime));
+        stateMgr.changeState();
     }
 
 }
