@@ -22,7 +22,18 @@
         <service
             android:name=".StateIntentService"
             android:exported="false">
+
         </service>
+
+        <receiver
+            android:name=".StateReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="ru.olegshulika.asmeet4.STATE_MESSAGE" />
+            </intent-filter>
+
+        </receiver>
     </application>
 
 </manifest>

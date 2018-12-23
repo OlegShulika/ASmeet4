@@ -1,5 +1,7 @@
 package ru.olegshulika.asmeet4;
 
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,17 +10,19 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "1_MainAct";
+    private static final String TAG = "MainActivity";
     private Button mChangeStateButton;
     private TextView mCurrentState;
+    private StateReceiver mStateReceiver;
+    private IntentFilter mIntentFilter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         initViews();
         initListeners();
+        initBroadcastReceiver();
         Log.d(TAG, " onCreate");
     }
 
@@ -32,10 +36,16 @@ public class MainActivity extends AppCompatActivity {
         mChangeStateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                StateIntentService.startChangeStateAction(MainActivity.this,
-                        System.currentTimeMillis());
+                Intent intent = StateIntentService.getIntentForChangeState(MainActivity.this,
+                                      System.currentTimeMillis());
+                startService(intent);
             }
         });
+    }
+
+    void initBroadcastReceiver() {
+        mStateReceiver = new StateReceiver();
+        mIntentFilter = new IntentFilter(StateReceiver.STATE_MESSAGE_ACTION);
     }
 
     @Override
@@ -48,12 +58,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Log.d(TAG, " onResume");
+        registerReceiver(mStateReceiver,mIntentFilter,StateReceiver.STATE_MESSAGE_PERMISSION,null);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         Log.d(TAG, " onPause");
+        unregisterReceiver(mStateReceiver);
     }
 
     @Override
