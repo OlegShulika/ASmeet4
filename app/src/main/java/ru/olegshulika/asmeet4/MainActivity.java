@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
+    private static final int TEXT_SIZE = 32;
     private Button mChangeStateButton;
     private TextView mCurrentState;
     private StateReceiver mStateReceiver;
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     void initViews(){
         mChangeStateButton = findViewById(R.id.button_change_state);
         mCurrentState = findViewById(R.id.current_state_value);
+        mCurrentState.setTextSize(TEXT_SIZE);
         this.setTitle(getString(R.string.app_name));
     }
 
@@ -44,7 +46,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void initBroadcastReceiver() {
-        mStateReceiver = new StateReceiver();
+        mStateReceiver = new StateReceiver(new StateActionCallBack(){
+            @Override
+            public void onStateMessageReceived(Character state){
+                mCurrentState.setText("->"+state);
+            }
+        });
         mIntentFilter = new IntentFilter(StateReceiver.STATE_MESSAGE_ACTION);
     }
 
@@ -58,7 +65,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Log.d(TAG, " onResume");
-        registerReceiver(mStateReceiver,mIntentFilter,StateReceiver.STATE_MESSAGE_PERMISSION,null);
+        registerReceiver(mStateReceiver,mIntentFilter);
+        //registerReceiver(mStateReceiver,mIntentFilter,StateReceiver.STATE_MESSAGE_PERMISSION,null);
     }
 
     @Override
